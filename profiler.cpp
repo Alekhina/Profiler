@@ -5,7 +5,7 @@
 #include <cmath>
 #include <set>
 
-//подключение файлов с реализацией деревьев
+//including files with realizations of trees
 //#include ""
 //#include ""
 
@@ -51,13 +51,13 @@ private:
         file.open("insert.txt");
         file << "logN"  << ',' << "t" << '\n';
 
-        //тут просто заполн€ю первые много элементов
+        //just filling the beginning of the tree
         //auto u = tested_tree.insert(a % p);
         for (i = 0 ; i < pow(2, min_k) ; i++){
             tested_tree.insert(a*i % p);
         }
 
-        //тут дальнейший поток ввода: ввод€тс€ числа -- остатки от делени€ a*j, лежащие в [1; p] на простое p
+        //continue filling with recording
         for (k = min_k ; k < max_k ; k++){
             for (j = pow(2, k) ; j < pow(2, k+1) ; j++){
                 start = std::chrono::high_resolution_clock::now();
@@ -91,7 +91,7 @@ private:
                 finish = std::chrono::high_resolution_clock::now();
                 interval = finish - start;
                 file1 << k << ',' << interval.count() << '\n';
-                if (it != tested_tree.end()){ //„“ќ ¬ќ«¬–јўј≈“ find(), ≈—Ћ» «Ќј„≈Ќ»≈ Ќ≈ Ќј…ƒ≈Ќќ?
+                if (it != tested_tree.end()){ //√Ч√Т√О √В√О√З√В√Р√А√Щ√А√Е√Т find(), √Е√С√Л√И √З√Н√А√Ч√Е√Н√И√Е √Н√Е √Н√А√Й√Д√Е√Н√О?
                     start = std::chrono::high_resolution_clock::now();
                     tested_tree.erase(b*j % p);
                     finish = std::chrono::high_resolution_clock::now();
