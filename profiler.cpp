@@ -10,12 +10,12 @@
 //#include ""
 
 uint64_t p;
-int factor = 13;
+int factor = 10;
 int a = 1;
 int b = 17;
 int i, j, k, N;
 int min_k = 10;
-int max_k = 30;
+int max_k = 20;
 
 auto start = std::chrono::high_resolution_clock::now();
 auto finish = std::chrono::high_resolution_clock::now();
@@ -48,7 +48,7 @@ private:
 
     check_insert()
     {
-        file.open("insert.txt");
+        file.open("insert.csv");
         file << "logN"  << ',' << "t" << '\n';
 
         //just filling the beginning of the tree
@@ -77,8 +77,8 @@ private:
 
     check_find_and_erase()
     {
-        file1.open("find.txt");
-        file2.open("erase.txt");
+        file1.open("find.csv");
+        file2.open("erase.csv");
         file1 << "logN"  << ',' << "t" << '\n';
         file2 << "logN"  << ',' << "t" << '\n';
 
@@ -91,7 +91,7 @@ private:
                 finish = std::chrono::high_resolution_clock::now();
                 interval = finish - start;
                 file1 << k << ',' << interval.count() << '\n';
-                if (it != tested_tree.end()){ //×ÒÎ ÂÎÇÂÐÀÙÀÅÒ find(), ÅÑËÈ ÇÍÀ×ÅÍÈÅ ÍÅ ÍÀÉÄÅÍÎ?
+                if (it != tested_tree.end()){ //How does it work in our realization of trees?
                     start = std::chrono::high_resolution_clock::now();
                     tested_tree.erase(b*j % p);
                     finish = std::chrono::high_resolution_clock::now();
