@@ -9,48 +9,37 @@
 //#include ""
 //#include ""
 
-uint64_t p;
-int factor = 10;
-int a = 1;
-int b = 17;
+uint64_t p = 995009;
+int a, b, c;
+int range = 100;
 int i, j, k, N;
 int min_k = 10;
-int max_k = 20;
+int max_k = 19;
 
 auto start = std::chrono::high_resolution_clock::now();
 auto finish = std::chrono::high_resolution_clock::now();
-std::chrono::duration<double> interval = finish - start;
+double interval = double(std::chrono::duration_cast <std::chrono::microseconds>(finish-start).count());
 
 template <class T>
 class Profiler
 {
 public:
     Profiler(){
-        generating_big_prime_number();
-
-        check_insert();
-        check_find_and_erase();
+        open_files();
+        for (a = 1 ; a < range ; a++){
+            check_asymptotics();
+        }
+        close_files();
     }
     ~Profiler(){
 
     }
 private:
     T tested_tree;
-    std::ofstream file, file1, file2;
+    std::ofstream file3, file1, file2;
 
-    void generating_big_prime_number()
+    check_asymptotics()
     {
-        for (p = 1 ; p < factor ; p++){
-            p *= p;
-        }
-        p--;
-    }
-
-    check_insert()
-    {
-        file.open("insert.csv");
-        file << "logN"  << ',' << "t" << '\n';
-
         //just filling the beginning of the tree
         //auto u = tested_tree.insert(a % p);
         for (i = 0 ; i < pow(2, min_k) ; i++){
@@ -59,50 +48,55 @@ private:
 
         //continue filling with recording
         for (k = min_k ; k < max_k ; k++){
+            start = std::chrono::high_resolution_clock::now();
             for (j = pow(2, k) ; j < pow(2, k+1) ; j++){
-                start = std::chrono::high_resolution_clock::now();
                 tested_tree.insert(a*j % p);
-                finish = std::chrono::high_resolution_clock::now();
-                interval = finish - start;
-                file << k << ',' << interval.count() << '\n';
             }
+            finish = std::chrono::high_resolution_clock::now();
+            interval = double(std::chrono::duration_cast <std::chrono::microseconds>(finish-start).count());
+            file3 << k << ',' << interval/(pow(2, k)) << '\n';
         }
 
         for (i = pow(2, max_k) ; i < p ; i++){
             tested_tree.insert(a*j % p);
         }
 
-        file.close();
+        auto it = tested_tree.find(2);
+
+        for (k = max_k ; k > min_k ; k--){
+            start = std::chrono::high_resolution_clock::now();
+            for (j = pow(2, k) ; j < pow(2, k+1) ; j++){
+                it = tested_tree.find((a*2)*j % p);
+            }
+            finish = std::chrono::high_resolution_clock::now();
+            interval = double(std::chrono::duration_cast <std::chrono::microseconds>(finish-start).count());
+            file1 << k << ',' << interval/(pow(2, k)) << '\n';
+
+            start = std::chrono::high_resolution_clock::now();
+            for (j = pow(2, k) ; j < pow(2, k+1) ; j++){
+                tested_tree.erase((a*3)*j % p);
+            }
+            finish = std::chrono::high_resolution_clock::now();
+            interval = double(std::chrono::duration_cast <std::chrono::microseconds>(finish-start).count());
+            file2 << k << ',' << interval/(pow(2, k)) << '\n';
+        }
     }
 
-    check_find_and_erase()
+    void open_files()
     {
+        file3.open("insert.csv");
         file1.open("find.csv");
         file2.open("erase.csv");
         file1 << "logN"  << ',' << "t" << '\n';
         file2 << "logN"  << ',' << "t" << '\n';
+        file3 << "logN"  << ',' << "t" << '\n';
+    }
 
-        auto it = tested_tree.find(2);
-
-        for (k = max_k ; k > min_k ; k--){
-            for (j = pow(2, k) ; j < pow(2, k+1) ; j++){
-                start = std::chrono::high_resolution_clock::now();
-                it = tested_tree.find(b*j % p);
-                finish = std::chrono::high_resolution_clock::now();
-                interval = finish - start;
-                file1 << k << ',' << interval.count() << '\n';
-                if (it != tested_tree.end()){ //How does it work in our realization of trees?
-                    start = std::chrono::high_resolution_clock::now();
-                    tested_tree.erase(b*j % p);
-                    finish = std::chrono::high_resolution_clock::now();
-                    interval = finish - start;
-                    file2 << k << ',' << interval.count() << '\n';
-                }
-            }
-        }
-
+    void close_files()
+    {
         file1.close();
         file2.close();
+        file3.close();
     }
 };
 
